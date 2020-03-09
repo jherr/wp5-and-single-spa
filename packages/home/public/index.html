@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="http://localhost:3002/remoteEntry.js"></script>
+    <script src="http://localhost:3003/remoteEntry.js"></script>
+    <script src="http://localhost:3004/remoteEntry.js"></script>
+    <script src="http://localhost:3005/remoteEntry.js"></script>
+    <link href="//cdn.muicss.com/mui-0.10.1/css/mui.min.css" rel="stylesheet" type="text/css" />
+    <script src="//cdn.muicss.com/mui-0.10.1/js/mui.min.js"></script>
+    <style>
+      .product-area {
+        display: grid;
+        grid-template-columns: 70% 30%;
+      }
+      .product-area > div {
+        padding: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="single-spa-application:header"></div>
+    <div class="product-area">
+      <div id="single-spa-application:product-image"></div>
+      <div id="single-spa-application:buy-tools"></div>
+    </div>
+    <div id="single-spa-application:footer"></div>
+  </body>
+</html>

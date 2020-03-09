@@ -1,0 +1,27 @@
+{
+  "name": "buy-tools",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "@babel/core": "^7.8.6",
+    "@babel/preset-react": "^7.8.3",
+    "babel-loader": "^8.0.6",
+    "copy-webpack-plugin": "^5.1.1",
+    "html-webpack-plugin": "git://github.com/ScriptedAlchemy/html-webpack-plugin#master",
+    "serve": "^11.3.0",
+    "single-spa": "^5.1.0",
+    "single-spa-svelte": "^2.0.0",
+    "svelte": "^3.19.2",
+    "webpack": "git://github.com/webpack/webpack.git#dev-1",
+    "webpack-cli": "^3.3.11"
+  },
+  "scripts": {
+    "start": "webpack --watch",
+    "build": "webpack --mode production",
+    "serve": "serve dist -p 3004"
+  },
+  "devDependencies": {
+    "raw-loader": "^4.0.0",
+    "svelte-loader": "^2.13.6"
+  }
+}
