@@ -16,13 +16,13 @@ const Header = () => {
         <tbody>
           <tr style={{ verticalAlign: 'middle' }}>
             <td
-              className="mui--appbar-height mui--text-display2"
+              className="mui--appbar-height mui--text-display1"
               style={{ paddingLeft: '1em' }}
             >
               Header
             </td>
             <td
-              className="mui--appbar-height mui--text-display2"
+              className="mui--appbar-height mui--text-display1"
               align="right"
               style={{ paddingRight: '1em' }}
             >
