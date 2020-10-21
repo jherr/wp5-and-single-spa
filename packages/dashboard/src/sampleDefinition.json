@@ -1,0 +1,74 @@
+{
+    "dataSources": {
+        "search1": {
+            "uql": {
+               "query": "{value}",
+                "a": "a",
+                "b": "b"
+            }
+        },
+        "search2": {
+            "uql": {
+               "query": "{value1}",
+                "a": "c",
+                "b": "d"
+            }
+        }
+    },
+    "visualizations": {
+        "table": {
+            "title": "{value}",
+            "type": "viz.table",
+            "options": {
+                "a": "c",
+                "b": "d"
+            },
+            "dataSources": {
+                "primary": "search1"
+            }
+        },
+        "table2": {
+            "title": "{title}",
+            "type": "viz.table",
+            "options": {
+                "a": "c",
+                "b": "d"
+            },
+            "dataSources": {
+                "primary": "search2"
+            }
+        }
+    },
+    "forms": {
+        "singleSelect1": {
+            "title": "Title",
+            "type": "form.textInput",
+            "options": {},
+            "tokens": {
+                "primary": "value"
+            } 
+        }
+    },
+    "tokens": {
+        "title": "",
+        "value": "",
+        "value1":""
+    },
+    "layout": {
+        "type": "absolute",
+        "options": {
+            "columns": 12
+        },
+        "structure": [
+            {
+                "item": "table",
+                "position": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 1200,
+                    "h": 400
+                }
+            }
+        ]
+    }
+}

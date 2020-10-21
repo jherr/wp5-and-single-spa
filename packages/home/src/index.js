@@ -24,4 +24,10 @@ registerApplication(
   location => location.pathname.startsWith('/')
 );
 
+registerApplication(
+  'test',
+  () => import('test/definition'),
+  location => location.pathname.startsWith('/')
+);
+
 start();

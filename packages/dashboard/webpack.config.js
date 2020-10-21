@@ -14,7 +14,7 @@ module.exports = {
   },
 
   output: {
-    publicPath: 'http://localhost:3001/'
+    publicPath: 'http://localhost:3006/'
   },
 
   resolve: {
@@ -33,26 +33,17 @@ module.exports = {
       {
         test: /\.md$/,
         loader: 'raw-loader'
-      }
+      },
     ]
   },
 
   plugins: [
-    new CopyPlugin([
-      { from: 'fruit', to: 'fruit' },
-    ]),
     new ModuleFederationPlugin({
-      name: 'home',
-      library: { type: 'var', name: 'home' },
+      name: 'test',
+      library: { type: 'var', name: 'test' },
       filename: 'remoteEntry.js',
-      remotes: {
-        nav: 'nav',
-        productImage: 'productImage',
-        buyTools: 'buyTools',
-        test: 'test'
-      },
       exposes: {
-        fruit: './src/fruit'
+        definition: './src/definition'
       },
       shared: []
     }),
