@@ -2,14 +2,14 @@
     "dataSources": {
         "search1": {
             "uql": {
-               "query": "{value}",
+               "query": "http://localhost:3000/posts?_page={value}",
                 "a": "a",
                 "b": "b"
             }
         },
         "search2": {
             "uql": {
-               "query": "{value1}",
+               "query": "http://localhost:3000/posts?_page={value1}",
                 "a": "c",
                 "b": "d"
             }

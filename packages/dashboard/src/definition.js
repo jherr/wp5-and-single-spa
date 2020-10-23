@@ -1,13 +1,17 @@
 import definition from "./sampleDefinition.json";
-import uql from "./mockUql";
-import { pick, flatten, mapObjIndexed, is, match,map, values, dropRepeats, fromPairs, toPairs } from "ramda";
+import { pick, flatten, mapObjIndexed, is, match,map, values, dropRepeats, fromPairs, toPairs, equals, all } from "ramda";
 import jVar from "json-variables";
+import dataSourceFactory from "./utils/dataSource";
+import {
+    of,
+} from 'rxjs';
 import {
     RecoilRoot,
     atom,
     selector,
     useRecoilState,
     useRecoilValue,
+    selectorFamily,
   } from 'recoil';
 import React from "react";
 import ReactDOM from 'react-dom';
@@ -79,29 +83,35 @@ const getVizSelectorsFromDefinition = (tokenAtoms) => ( visualizations ) => {
       })},visualizations)
 }
 
-const getDataSourceSelectorFromDefinition = (tokenAtoms) => ( dataSources  ) => {
-    return mapObjIndexed((dataSource, key)=> selector({
-        key,
-        get: async ({get}) => {
-            const relatedTokensId = getTokensArrayFromConfig(dataSource.uql);
-            const relatedTokens = map( get, pick(relatedTokensId, tokenAtoms));
-            const config  = renderJson({
-                ...dataSource.uql,
-                ...relatedTokens
-            })
-            const res = await uql(config)
-            return res;
-        },
-      }),dataSources)
+const getDataSourceSelectorFromDefinition = (tokenAtoms) => ( dataSources ) => {
+    return mapObjIndexed((dataSource, key)=> {
+        return selector({
+            key,
+            get:({get}) => {
+                const relatedTokensId = getTokensArrayFromConfig(dataSource.uql);
+                const relatedTokens = map( get, pick(relatedTokensId, tokenAtoms));
+                const config  = renderJson({
+                    ...dataSource.uql,
+                    ...relatedTokens
+                })
+                const isEmptyString = equals("");
+                if(all(isEmptyString, values(relatedTokens))){
+                    return ()=>of([]);
+                }
+                const getResult = dataSourceFactory(config);
+                return getResult;
+            },
+        });
+    },dataSources)
 }
 
 const vizFactory = ( vizKey, dataSourceSelectors, vizSelectors, dep ) =>  {
     return ( props ) => {
         const vizConfig = useRecoilValue(vizSelectors[vizKey]);
         const { dataSources, type } = vizConfig;
-        const data = map((v)=> useRecoilValue(dataSourceSelectors[v]), dataSources);
+        const getData = map((v)=> useRecoilValue(dataSourceSelectors[v]), dataSources);
         const  Viz = dep[type];
-        return <Viz data = {data} {...vizConfig}/>
+        return <Viz {...getData} {...vizConfig}/>
     };
 }
 
@@ -129,28 +139,31 @@ const importVizAndForm = (definition) => {
 const DashboardCore = ( definition )=> {
     const viz = definition.visualizations;
     const forms = definition.forms;
+    const dataSource = definition.dataSources; 
     const dependency = importVizAndForm(definition);
     const tokenAtoms = createAtomFromToken(definition.tokens);
-    const dataSourceSelectors = getDataSourceSelectorFromDefinition(tokenAtoms)(definition.dataSources);
+    const dataSourceSelectors = getDataSourceSelectorFromDefinition(tokenAtoms)(dataSource);
     const vizSelectors = getVizSelectorsFromDefinition(tokenAtoms)(viz);
     const vizComponents = mapObjIndexed((v, k)=> vizFactory(k, dataSourceSelectors, vizSelectors, dependency), viz );
     const formComponents = map((v)=> formFactory(v, tokenAtoms,dependency), forms );
     return ( props )=>{
         return (<RecoilRoot>
+            <React.Suspense fallback={<div>Loading...</div>}>
             {
                 map( 
-                    ([key,V])=><React.Suspense fallback={<div>Loading...</div>} key={key}><V/></React.Suspense>,
+                    ([key,V])=><V key={key}/>,
                         toPairs(vizComponents)
                 )
             }
             <div>
                 {
                     map( 
-                        ([key,V])=><React.Suspense fallback={<div>Loading...</div>} key={key}><V /></React.Suspense>,
+                        ([key,V])=><V key={key}/>,
                         toPairs(formComponents)
                     )
                 }
             </div>
+            </React.Suspense>
         </RecoilRoot>);
     }
 }

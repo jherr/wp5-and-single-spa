@@ -1,6 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
-const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: './src/index',
@@ -10,15 +9,15 @@ module.exports = {
   devtool: 'source-map',
 
   optimization: {
-    minimize: false
+    minimize: false,
   },
 
   output: {
-    publicPath: 'http://localhost:3006/'
+    publicPath: 'http://localhost:3006/',
   },
 
   resolve: {
-    extensions: ['.jsx', '.js', '.json']
+    extensions: ['.jsx', '.js', '.json'],
   },
 
   module: {
@@ -27,14 +26,14 @@ module.exports = {
         test: /\.jsx?$/,
         loader: require.resolve('babel-loader'),
         options: {
-          presets: [require.resolve('@babel/preset-react')]
+          presets: [require.resolve('@babel/preset-react')],
         }
       },
       {
         test: /\.md$/,
-        loader: 'raw-loader'
+        loader: 'raw-loader',
       },
-    ]
+    ],
   },
 
   plugins: [
@@ -43,12 +42,12 @@ module.exports = {
       library: { type: 'var', name: 'test' },
       filename: 'remoteEntry.js',
       exposes: {
-        definition: './src/definition'
+        definition: './src/definition',
       },
-      shared: []
+      shared: [],
     }),
     new HtmlWebpackPlugin({
-      template: './public/index.html'
+      template: './public/index.html',
     }),
-  ]
+  ],
 };
