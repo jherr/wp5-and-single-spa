@@ -10,15 +10,18 @@ import {
 } from 'rxjs/operators';
 import LinkHeader from 'http-link-header';
 import deepmerge from 'deepmerge';
+import { toObservable, translateDataSourceDefinitionToFetch } from './dataSourceUtils';
 
 const dataSource = (config) => () => {
-  const { query: url } = config;
-  const res$ = from(fetch(url)).pipe(
+  const fetch$ = toObservable(fetch);
+  const params = translateDataSourceDefinitionToFetch(config);
+  const res$ = fetch$(params).pipe(
     expand((res) => {
+      // this hanles multipage need change to actual implementation
       const linkHeader = res.headers.get('Link');
       const next = LinkHeader.parse(linkHeader).get('rel', 'next');
       if (next.length) {
-        return from(fetch(next[0].uri));
+        return fetch$(next[0].uri);
       }
       return empty();
     }),

@@ -88,10 +88,10 @@ const getDataSourceSelectorFromDefinition = (tokenAtoms) => ( dataSources ) => {
         return selector({
             key,
             get:({get}) => {
-                const relatedTokensId = getTokensArrayFromConfig(dataSource.uql);
+                const relatedTokensId = getTokensArrayFromConfig(dataSource);
                 const relatedTokens = map( get, pick(relatedTokensId, tokenAtoms));
                 const config  = renderJson({
-                    ...dataSource.uql,
+                    ...dataSource,
                     ...relatedTokens
                 })
                 const isEmptyString = equals("");
