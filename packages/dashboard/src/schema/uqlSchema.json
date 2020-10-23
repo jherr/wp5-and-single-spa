@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "properties": {
+      "/": {}
+  },
+  "patternProperties": {
+      "^[A-Za-z]+$": { 
+        "type": "object" ,
+        "properties": {
+          "type": {"type":"string", "pattern":"uql"},
+          "query": {"type":"string"}
+        },
+        "additionalProperties": true
+      }
+  },
+  "additionalProperties": false
+}

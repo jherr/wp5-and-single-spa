@@ -1,0 +1,10 @@
+{
+  "type": "object",
+  "properties": {
+      "/": {}
+  },
+  "patternProperties": {
+      "^[A-Za-z]+$": { "type": ["number","string"] }
+  },
+  "additionalProperties": false
+}
