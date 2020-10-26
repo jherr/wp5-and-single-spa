@@ -16,7 +16,8 @@ import {
 import React from "react";
 import ReactDOM from 'react-dom';
 import singleSpaReact from 'single-spa-react';
-
+import Fromlayout from './layout/FormLayout';
+import getVizGirdLayout from './layout/VizGridLayout'
 /*
     1.token
     2.viz (can't change individually)
@@ -146,27 +147,31 @@ const DashboardCore = ( definition )=> {
     const vizSelectors = getVizSelectorsFromDefinition(tokenAtoms)(viz);
     const vizComponents = mapObjIndexed((v, k)=> vizFactory(k, dataSourceSelectors, vizSelectors, dependency), viz );
     const formComponents = map((v)=> formFactory(v, tokenAtoms,dependency), forms );
+    const VizGirdLayout = getVizGirdLayout(definition.layout)
     return ( props )=>{
         return (<RecoilRoot>
             <React.Suspense fallback={<div>Loading...</div>}>
-            {
-                map( 
-                    ([key,V])=><V key={key}/>,
-                        toPairs(vizComponents)
-                )
-            }
-            <div>
+            <Fromlayout>
                 {
                     map( 
-                        ([key,V])=><V key={key}/>,
+                        ([key,V])=><Fromlayout.Item key={key}><V/></Fromlayout.Item>,
                         toPairs(formComponents)
                     )
                 }
-            </div>
+            </Fromlayout>
+            <VizGirdLayout>
+                {
+                    map( 
+                        ([key,V])=><V key={key}/>,
+                            toPairs(vizComponents)
+                    )
+                }
+            </VizGirdLayout>
             </React.Suspense>
         </RecoilRoot>);
     }
 }
+
 
 export default DashboardCore(definition);
 

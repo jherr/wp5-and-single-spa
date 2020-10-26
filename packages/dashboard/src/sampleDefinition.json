@@ -35,6 +35,17 @@
             "dataSources": {
                 "primary": "search2"
             }
+        },
+        "table3": {
+            "title": "{title}",
+            "type": "viz.table",
+            "options": {
+                "a": "c",
+                "b": "d"
+            },
+            "dataSources": {
+                "primary": "search2"
+            }
         }
     },
     "forms": {
@@ -43,8 +54,15 @@
             "type": "form.textInput",
             "options": {},
             "tokens": {
-                "primary": "value",
-                "secondary" : "title"
+                "primary": "value"
+            } 
+        },
+        "singleSelect2": {
+            "title": "Title",
+            "type": "form.textInput",
+            "options": {},
+            "tokens": {
+                "primary" : "title"
             } 
         }
     },
@@ -54,20 +72,10 @@
         "value1":""
     },
     "layout": {
-        "type": "absolute",
-        "options": {
-            "columns": 12
-        },
+        "type": "grid",
         "structure": [
-            {
-                "item": "table",
-                "position": {
-                    "x": 0,
-                    "y": 0,
-                    "w": 1200,
-                    "h": 400
-                }
-            }
+            ["table", "table2"],
+            ["table3"]
         ]
     }
 }
