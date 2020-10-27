@@ -3,7 +3,7 @@ const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPl
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  entry: './src/store',
+  entry: './src/bootstrap.js',
   cache: false,
 
   mode: 'development',
@@ -39,15 +39,16 @@ module.exports = {
 
   plugins: [
     new ModuleFederationPlugin({
-      name: 'store',
-      library: { type: 'var', name: 'store' },
+      name: 'resources',
+      library: { type: 'var', name: 'resources' },
       filename: 'remoteEntry.js',
       remotes: {
       },
       exposes: {
-        store: './src/store'
+        "./viz.Test": './src/viz/Test',
+        "./form.Test": './src/form/Test'
       },
-      shared: []
+      shared: { react: { singleton: true }, "react-dom": { singleton: true } },
     }),
     new HtmlWebpackPlugin({
       template: './public/index.html'

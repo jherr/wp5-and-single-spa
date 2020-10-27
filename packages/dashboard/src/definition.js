@@ -1,5 +1,5 @@
 import definition from "./sampleDefinition.json";
-import { pick, flatten, mapObjIndexed, is, match,map, values, dropRepeats, fromPairs, toPairs, equals, all } from "ramda";
+import { pick, flatten, mapObjIndexed, is, match,map, values, dropRepeats, fromPairs, toPairs, equals, all, split } from "ramda";
 import jVar from "json-variables";
 import dataSourceFactory from "./utils/dataSource";
 import {
@@ -18,6 +18,8 @@ import ReactDOM from 'react-dom';
 import singleSpaReact from 'single-spa-react';
 import Fromlayout from './layout/FormLayout';
 import getVizGirdLayout from './layout/VizGridLayout'
+
+
 /*
     1.token
     2.viz (can't change individually)
@@ -29,6 +31,19 @@ import getVizGirdLayout from './layout/VizGridLayout'
     token change --> everything token related changes
     dataSource change --> viz change 
 */
+
+function loadComponent(scope, module) {
+    return async () => {
+      // Initializes the share scope. This fills it with known provided modules from this build and all remotes
+      await __webpack_init_sharing__("default");
+      const container = window[scope]; // or get the container somewhere else
+      // Initialize the container, it may provide shared modules
+      await container.init(__webpack_share_scopes__.default);
+      const factory = await window[scope].get(module);
+      const Module = factory();
+      return Module;
+    };
+}
 
 const  renderJson = (obj) => jVar(obj,{
   heads: '{',
@@ -129,17 +144,18 @@ const formFactory = ( formConfig, tokenAtoms, dep ) => {
         return <Form states={states}/>
     }
 }
-const importVizAndForm = (definition) => {
-    const viz = definition.visualizations;
-    const forms = definition.forms;
+
+const importVizAndForm = (def) => {
+    const { forms, visualizations:viz } = def;
     const vizComponent = dropRepeats(values(map(({type})=> type, viz)));
     const formcomponent = dropRepeats(values(map(({type})=> type, forms)));
-    return fromPairs(map((p)=>[p, React.lazy(()=>import(`./${p}`))],  [...vizComponent, ...formcomponent]));
+    return fromPairs(map((p)=>{
+        return [p, React.lazy(loadComponent('resources',`./${p}`))]
+    },  [...vizComponent, ...formcomponent]));
 }
 
-const DashboardCore = ( definition )=> {
-    const viz = definition.visualizations;
-    const forms = definition.forms;
+const DashboardCore = ( def )=> {
+    const { forms, visualizations:viz } = def;
     const dataSource = definition.dataSources; 
     const dependency = importVizAndForm(definition);
     const tokenAtoms = createAtomFromToken(definition.tokens);

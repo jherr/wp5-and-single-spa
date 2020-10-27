@@ -2,7 +2,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 
 module.exports = {
-  entry: './src/index',
+  entry: './src/bootstrap',
   cache: false,
 
   mode: 'development',
@@ -48,7 +48,10 @@ module.exports = {
       exposes: {
         definition: './src/definition',
       },
-      shared: [],
+      remotes:{
+        "resources":'resources'
+      },
+      shared: { react: { singleton: true }, "react-dom": { singleton: true } },
     }),
     new HtmlWebpackPlugin({
       template: './public/index.html',

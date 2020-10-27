@@ -16,7 +16,7 @@
     "visualizations": {
         "table": {
             "title": "{value}",
-            "type": "viz.table",
+            "type": "viz.Test",
             "options": {
                 "a": "c",
                 "b": "d"
@@ -27,7 +27,7 @@
         },
         "table2": {
             "title": "{title}",
-            "type": "viz.table",
+            "type": "viz.Test",
             "options": {
                 "a": "c",
                 "b": "d"
@@ -38,7 +38,7 @@
         },
         "table3": {
             "title": "{title}",
-            "type": "viz.table",
+            "type": "viz.Test",
             "options": {
                 "a": "c",
                 "b": "d"
@@ -51,7 +51,7 @@
     "forms": {
         "singleSelect1": {
             "title": "Title",
-            "type": "form.textInput",
+            "type": "form.Test",
             "options": {},
             "tokens": {
                 "primary": "value"
@@ -59,7 +59,7 @@
         },
         "singleSelect2": {
             "title": "Title",
-            "type": "form.textInput",
+            "type": "form.Test",
             "options": {},
             "tokens": {
                 "primary" : "title"

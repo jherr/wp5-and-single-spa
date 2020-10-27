@@ -6,19 +6,23 @@
     "@babel/core": "^7.8.6",
     "@babel/preset-react": "^7.8.3",
     "babel-loader": "^8.0.6",
+    "bizcharts": "^4.0.14",
     "copy-webpack-plugin": "^5.1.1",
-    "html-webpack-plugin": "git://github.com/ScriptedAlchemy/html-webpack-plugin#master",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
     "serve": "^11.3.0",
-    "single-spa": "^5.1.0",
-    "webpack": "git://github.com/webpack/webpack.git#dev-1",
-    "webpack-cli": "^3.3.11"
+    "single-spa": "^5.1.0"
   },
   "scripts": {
-    "start": "webpack --watch",
+    "start": "concurrently \"webpack --watch\" \"serve dist -p 3005\"",
     "build": "webpack --mode production",
     "serve": "serve dist -p 3005"
   },
   "devDependencies": {
-    "raw-loader": "^4.0.0"
+    "concurrently": "^5.3.0",
+    "html-webpack-plugin": "^4.5.0",
+    "raw-loader": "^4.0.0",
+    "webpack": "^5.2.0",
+    "webpack-cli": "^4.1.0"
   }
 }

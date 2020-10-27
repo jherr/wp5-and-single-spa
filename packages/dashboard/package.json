@@ -17,10 +17,9 @@
     "antd": "^4.7.3",
     "babel-loader": "^8.0.6",
     "deepmerge": "^4.2.2",
-    "html-webpack-plugin": "git://github.com/ScriptedAlchemy/html-webpack-plugin#master",
     "http-link-header": "^1.0.3",
     "js-beautify": "^1.13.0",
-    "json-variables": "^8.2.19",
+    "json-variables": "^8.2.20",
     "ramda": "^0.27.1",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
@@ -28,23 +27,25 @@
     "rxjs": "^6.6.3",
     "serve": "^11.3.0",
     "single-spa-react": "^2.11.1",
-    "styled-components": "^5.2.0",
-    "webpack": "git://github.com/webpack/webpack.git#dev-1",
-    "webpack-cli": "^3.3.11"
+    "styled-components": "^5.2.0"
   },
   "devDependencies": {
     "concurrently": "^5.3.0",
     "css-loader": "^5.0.0",
-    "eslint": "^7.2.0",
+    "eslint": "^7.12.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-prettier": "^6.14.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-jsx-a11y": "^6.4.0",
     "eslint-plugin-react": "^7.21.5",
-    "eslint-plugin-react-hooks": "^4.0.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "jsdoc": "^3.6.6",
     "json-loader": "^0.5.7",
     "json-server": "^0.16.2",
-    "style-loader": "^2.0.0"
+    "style-loader": "^2.0.0",
+    "html-webpack-plugin": "^4.5.0",
+    "raw-loader": "^4.0.0",
+    "webpack": "^5.2.0",
+    "webpack-cli": "^4.1.0"
   }
 }
