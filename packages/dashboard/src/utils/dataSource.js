@@ -8,20 +8,26 @@ import {
   concatMap,
   scan,
 } from 'rxjs/operators';
-import LinkHeader from 'http-link-header';
 import deepmerge from 'deepmerge';
-import { toObservable, translateDataSourceDefinitionToFetch } from './dataSourceUtils';
+import { toObservable, translateDataSourceDefinitionToFetch, uqlPaginationStretagy } from './dataSourceUtils';
 
 const dataSource = (config) => () => {
-  const fetch$ = toObservable(fetch);
+  const { type } = config;
+  let dataSourcefn =  fetch;
+  if(type === "data"){
+    dataSourcefn = async () => {
+      const myBlob = new Blob([JSON.stringify(config.data)], {type : 'application/json'});
+      const init = { "status" : 200 };
+      return new Response(myBlob,init);
+    };
+  }
+  const getDataSource = toObservable(dataSourcefn);
   const params = translateDataSourceDefinitionToFetch(config);
-  const res$ = fetch$(params).pipe(
+  const res$ = getDataSource(params).pipe(
     expand((res) => {
       // this hanles multipage need change to actual implementation
-      const linkHeader = res.headers.get('Link');
-      const next = LinkHeader.parse(linkHeader).get('rel', 'next');
-      if (next.length) {
-        return fetch$(next[0].uri);
+      if(type==="uql"){
+        return uqlPaginationStretagy(getDataSource, res);
       }
       return empty();
     }),

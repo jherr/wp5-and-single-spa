@@ -1,5 +1,5 @@
 import definition from "./sampleDefinition.json";
-import { pick, flatten, mapObjIndexed, is, match,map, values, dropRepeats, fromPairs, toPairs, equals, all, split } from "ramda";
+import { is, pick, flatten, mapObjIndexed, match,map, values, dropRepeats, fromPairs, toPairs, equals, all, isEmpty } from "ramda";
 import jVar from "json-variables";
 import dataSourceFactory from "./utils/dataSource";
 import {
@@ -57,6 +57,10 @@ const flatObject = (obj) => {
 }
 
 const getTokenFromString = ( s ) => {
+    const isString = is(String);
+    if(!isString(s)){
+        return []
+    }
     const tokensRaw = match(/\{(.*?)\}/g, s);
     const tokens = map(str => `${str.substr(1, str.length-2)}`,tokensRaw);
     return tokens;
@@ -110,12 +114,15 @@ const getDataSourceSelectorFromDefinition = (tokenAtoms) => ( dataSources ) => {
                     ...dataSource,
                     ...relatedTokens
                 })
+                if(isEmpty(relatedTokens)){
+                    return dataSourceFactory(config);
+                    
+                }
                 const isEmptyString = equals("");
                 if(all(isEmptyString, values(relatedTokens))){
                     return ()=>of([]);
                 }
-                const getResult = dataSourceFactory(config);
-                return getResult;
+                return dataSourceFactory(config);
             },
         });
     },dataSources)
@@ -131,17 +138,19 @@ const vizFactory = ( vizKey, dataSourceSelectors, vizSelectors, dep ) =>  {
     };
 }
 
-const formFactory = ( formConfig, tokenAtoms, dep ) => {
+const formFactory = ( formConfig, tokenAtoms, dataSourceSelectors, dep ) => {
+    const { dataSources=[], type } = formConfig;
     const tokensArray = values(formConfig.tokens);
     const relatedTokenAtoms = pick(tokensArray, tokenAtoms);
     return (props) => {
-        const { type } = formConfig;
         const states = map((v)=>{
             return useRecoilState(relatedTokenAtoms[v])
         },formConfig.tokens);
+        const getData = map((v)=> useRecoilValue(dataSourceSelectors[v]), dataSources);
+
         const  Form  = dep[type]
         
-        return <Form states={states}/>
+        return <Form states={states} {...getData}/>
     }
 }
 
@@ -162,7 +171,7 @@ const DashboardCore = ( def )=> {
     const dataSourceSelectors = getDataSourceSelectorFromDefinition(tokenAtoms)(dataSource);
     const vizSelectors = getVizSelectorsFromDefinition(tokenAtoms)(viz);
     const vizComponents = mapObjIndexed((v, k)=> vizFactory(k, dataSourceSelectors, vizSelectors, dependency), viz );
-    const formComponents = map((v)=> formFactory(v, tokenAtoms,dependency), forms );
+    const formComponents = map((v)=> formFactory(v, tokenAtoms,dataSourceSelectors, dependency), forms );
     const VizGirdLayout = getVizGirdLayout(definition.layout)
     return ( props )=>{
         return (<RecoilRoot>

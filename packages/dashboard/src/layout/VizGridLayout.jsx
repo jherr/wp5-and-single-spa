@@ -1,6 +1,7 @@
-import { Col, Row } from 'antd/lib/grid';
+import { Col, Row } from 'antd';
 import React from 'react';
 import { map, fromPairs, join } from 'ramda';
+
 
 const SPAN = 24;
 
