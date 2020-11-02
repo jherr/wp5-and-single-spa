@@ -13,7 +13,12 @@ import {
   equals,
   all,
   isEmpty,
+  keys,
 } from 'ramda';
+import {
+  BehaviorSubject
+} from 'rxjs';
+
 import jVar from 'json-variables';
 import { of } from 'rxjs';
 import {
@@ -22,8 +27,11 @@ import {
   selector,
   useRecoilState,
   useRecoilValue,
+  atomFamily,
+  selectorFamily,
+  useSetRecoilState
 } from 'recoil';
-import React from 'react';
+import React, { useState } from 'react';
 // import ReactDOM from 'react-dom';
 // import singleSpaReact from 'single-spa-react';
 import styled from 'styled-components';
@@ -31,6 +39,12 @@ import Fromlayout from './layout/FormLayout';
 import getVizGirdLayout from './layout/VizGridLayout';
 import dataSourceFactory from './utils/dataSource';
 import definition from './sampleDefinition.json';
+
+import { dataAtomFamily, tokenFamily} from './definitionComponents/recoilStore';
+import DataSource from "./definitionComponents/DataSource";
+import Token from "./definitionComponents/Token";
+import Viz from "./definitionComponents/Visualization";
+import Forms from "./definitionComponents/Forms";
 
 const DashboardContainer = styled.div`
   margin: 10px;
@@ -87,13 +101,19 @@ const getTokenFromString = (s) => {
 const createAtomFromToken = (tokens) => {
   const tokensFlat = flatObject(tokens);
 
-  const tokenAtoms = mapObjIndexed((value, key) => {
-    return atom({
-      key: `${key}`,
-      default: value,
-    });
-  }, tokensFlat);
-  return tokenAtoms;
+  const tokenFamily =  ({
+    key: `tokenAtomFamily`,
+    default: (key) => tokens[key],
+  });
+  // const tokenAtoms = mapObjIndexed((value, key) => {
+  //   return atom({
+  //     key: `${key}`,
+  //     default: value,
+  //   });
+  // }, tokensFlat);
+
+  // return tokenAtoms;
+  return tokenFamily;
 };
 
 const getTokensArrayFromConfig = (obj) => {
@@ -103,13 +123,14 @@ const getTokensArrayFromConfig = (obj) => {
   return tokens;
 };
 
-const getVizSelectorsFromDefinition = (tokenAtoms) => (visualizations) => {
+const getVizSelectorsFromDefinition = (token, tokenFamily) => (visualizations) => {
   return mapObjIndexed((viz, key) => {
     return selector({
       key,
       get: ({ get }) => {
         const relatedTokensId = getTokensArrayFromConfig(viz);
-        const relatedTokens = map(get, pick(relatedTokensId, tokenAtoms));
+
+        const relatedTokens = mapObjIndexed((v,k)=>get(tokenFamily(k)), pick(relatedTokensId, token));
         const config = renderJson({
           ...viz,
           ...relatedTokens,
@@ -120,13 +141,14 @@ const getVizSelectorsFromDefinition = (tokenAtoms) => (visualizations) => {
   }, visualizations);
 };
 
-const getDataSourceSelectorFromDefinition = (tokenAtoms) => (dataSources) => {
+const getDataSourceSelectorFromDefinition = (tokensAtom, tokenFamily) => (dataSources) => {
   return mapObjIndexed((dataSource, key) => {
     return selector({
       key,
       get: ({ get }) => {
         const relatedTokensId = getTokensArrayFromConfig(dataSource);
-        const relatedTokens = map(get, pick(relatedTokensId, tokenAtoms));
+        const token = get(tokensAtom);
+        const relatedTokens = mapObjIndexed((v, k)=>get(tokenFamily(k)), pick(relatedTokensId, token));
         const config = renderJson({
           ...dataSource,
           ...relatedTokens,
@@ -144,29 +166,18 @@ const getDataSourceSelectorFromDefinition = (tokenAtoms) => (dataSources) => {
   }, dataSources);
 };
 
-const vizFactory = (vizKey, dataSourceSelectors, vizSelectors, dep) => {
-  return (props) => {
-    const vizConfig = useRecoilValue(vizSelectors[vizKey]);
-    const { dataSources, type } = vizConfig;
-    const getData = map(
-      (v) => useRecoilValue(dataSourceSelectors[v]),
-      dataSources
-    );
-    const Viz = dep[type];
-    return <Viz {...getData} {...vizConfig} />;
-  };
-};
 
-const formFactory = (formConfig, tokenAtoms, dataSourceSelectors, dep) => {
+
+const formFactory = (formConfig, token, tokenFamily, dataSourceFamily, dep) => {
   const { dataSources = [], type } = formConfig;
   const tokensArray = values(formConfig.tokens);
-  const relatedTokenAtoms = pick(tokensArray, tokenAtoms);
+  const relatedTokenAtoms = mapObjIndexed((v,k)=>tokenFamily(k), pick(tokensArray, token));
   return (props) => {
     const states = map((v) => {
       return useRecoilState(relatedTokenAtoms[v]);
     }, formConfig.tokens);
     const getData = map(
-      (v) => useRecoilValue(dataSourceSelectors[v]),
+      (v) => useRecoilValue(dataSourceFamily(v)),
       dataSources
     );
 
@@ -190,50 +201,83 @@ const importVizAndForm = (def) => {
   );
 };
 
+
+
+
 const DashboardCore = (def) => {
-  const { forms, visualizations: viz } = def;
-  const dataSource = definition.dataSources;
-  const dependency = importVizAndForm(definition);
-  const tokenAtoms = createAtomFromToken(definition.tokens);
-  const dataSourceSelectors = getDataSourceSelectorFromDefinition(tokenAtoms)(
-    dataSource
-  );
-  const vizSelectors = getVizSelectorsFromDefinition(tokenAtoms)(viz);
-  const vizComponents = mapObjIndexed(
-    (v, k) => vizFactory(k, dataSourceSelectors, vizSelectors, dependency),
-    viz
-  );
-  const formComponents = map(
-    (v) => formFactory(v, tokenAtoms, dataSourceSelectors, dependency),
-    forms
-  );
-  const VizGirdLayout = getVizGirdLayout(definition.layout);
+  const { forms, visualizations: viz , tokens, dataSources: dataSource } = def;
+
+  // const vizFactory = (vizKey, dataSourceFamily, vizFamily, dep) => {
+  //   return (props) => {
+  //     const vizConfig = useRecoilValue(vizFamily(vizKey));
+  //     const { dataSources, type } = vizConfig;
+  //     const subs = map(
+  //       (v) => useRecoilValue(dataSourceFamily(v)),
+  //       dataSources
+  //     )
+  //     const getData = map(
+  //       (v) => useRecoilValue(dataSourceAtoms[v]),
+  //       dataSources
+  //     );
+  //     const Viz = dep[type];
+  //     // <Viz {...getData} {...vizConfig} />
+  //     return <div></div>;
+  //   };
+  // };
+  // const dependency = importVizAndForm(definition);
+  // const vizAtom = atom({key:"vizAtom", default: viz});
+  // const formsAtom = atom({key:"formsAtom", default: forms});
+  // const dataSourceAtom = atom({key:"dataSourceAtom", default: dataSource});
+
+  
+  // const dataSourceFamily = selectorFamily({
+  //     key: 'dataSourceFamily/Default',
+  //     get: key => ({get}) => {
+  //       const ds = get(dataSourceAtom)[key];
+  //       const relatedTokensId = getTokensArrayFromConfig(ds);
+  //       const relatedTokens = map((k)=>[k,get(tokenFamily(k))], relatedTokensId);
+  //       const config = renderJson({
+  //         ...ds,
+  //         ...fromPairs(relatedTokens)
+  //       });
+  //       const isEmptyString = equals('');
+  //       const isReady = !all(isEmptyString, map((v)=>v[1], relatedTokens));
+  //       return dataS[key](config, isReady);
+  //     },
+  // });
+  
+
+  // const vizFamily = selectorFamily({
+  //     key: 'vizFamily/Default',
+  //     get: key => ({get}) => {
+  //       const v = get(vizAtom)[key];
+  //       const relatedTokensId = getTokensArrayFromConfig(v);
+  //       const relatedTokens = map((k)=>[k,get(tokenFamily(k))], relatedTokensId);
+  //       const config = renderJson({
+  //         ...v,
+  //         ...fromPairs(relatedTokens)
+  //       });
+  //       return config;
+  //     },
+  //     // set: key => ({set}, newValue)
+  //   });
+
+  // const formFamily = atomFamily({
+  //   key: `formFamily`,
+  //   default: (key)=> forms[key]
+  // });
+
+ 
+  // const VizGirdLayout = getVizGirdLayout(definition.layout);
+ 
   return (props) => {
     return (
-      <DashboardContainer>
-        <RecoilRoot>
-          <React.Suspense fallback={<div>Loading...</div>}>
-            <Fromlayout>
-              {map(
-                ([key, V]) => (
-                  <Fromlayout.Item key={key}>
-                    <V />
-                  </Fromlayout.Item>
-                ),
-                toPairs(formComponents)
-              )}
-            </Fromlayout>
-            <VizGirdLayout>
-              {map(
-                ([key, V]) => (
-                  <V key={key} />
-                ),
-                toPairs(vizComponents)
-              )}
-            </VizGirdLayout>
-          </React.Suspense>
-        </RecoilRoot>
-      </DashboardContainer>
+      <>
+        <DataSource defaultDataSource={dataSource} />
+        <Token defaultToken = {tokens}/>
+        <Viz defaultViz={viz}/>
+        <Forms defaultForm={forms}/>
+      </>
     );
   };
 };

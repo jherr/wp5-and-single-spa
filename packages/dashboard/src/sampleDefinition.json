@@ -165,7 +165,7 @@
         "b": "d"
       },
       "dataSources": {
-        "primary": "dropdownOptions"
+        "primary": "search1"
       }
     },
     "table3": {
@@ -194,7 +194,7 @@
       "type": "form.Select",
       "options": {},
       "tokens": {
-        "primary": "title"
+        "primary": "value"
       },
       "dataSources": {
         "primary": "dropdownOptions"
@@ -210,7 +210,7 @@
     "type": "grid",
     "structure": [
       ["table", "table3"],
-      ["table2"]
+      ["table2", "table4"]
     ]
   }
 }
