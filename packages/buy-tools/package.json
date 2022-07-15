@@ -11,7 +11,7 @@
     "serve": "^11.3.0",
     "single-spa": "^5.1.0",
     "single-spa-svelte": "^2.0.0",
-    "svelte": "^3.19.2",
+    "svelte": "^3.49.0",
     "webpack": "git://github.com/webpack/webpack.git#dev-1",
     "webpack-cli": "^3.3.11"
   },
