@@ -51,7 +51,7 @@ module.exports = {
         store: 'store',
       },
       exposes: {
-        BuyTools: './src/index'
+        './BuyTools': './src/index'
       },
       shared: []
     }),

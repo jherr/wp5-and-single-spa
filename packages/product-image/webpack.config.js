@@ -42,7 +42,7 @@ module.exports = {
         store: 'store',
       },
       exposes: {
-        ProductImage: './src/index'
+        './ProductImage': './src/index'
       },
       shared: ['single-spa-html']
     }),
