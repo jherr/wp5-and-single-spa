@@ -41,8 +41,8 @@ module.exports = {
         store: 'store',
       },
       exposes: {
-        Header: './src/header',
-        Footer: './src/footer',
+        './Header': './src/header',
+        './Footer': './src/footer',
       },
       shared: ['react', 'react-dom', 'single-spa-react']
     }),

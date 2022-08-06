@@ -10,7 +10,7 @@
     "packages/*"
   ],
   "devDependencies": {
-    "concurrently": "^5.1.0",
+    "concurrently": "^7.3.0",
     "wsrun": "^5.2.0"
   }
 }

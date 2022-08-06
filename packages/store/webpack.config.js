@@ -45,7 +45,7 @@ module.exports = {
       remotes: {
       },
       exposes: {
-        store: './src/store'
+        './store': './src/store'
       },
       shared: []
     }),

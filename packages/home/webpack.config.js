@@ -38,9 +38,9 @@ module.exports = {
   },
 
   plugins: [
-    new CopyPlugin([
+    new CopyPlugin({patterns: [
       { from: 'fruit', to: 'fruit' },
-    ]),
+    ]}),
     new ModuleFederationPlugin({
       name: 'home',
       library: { type: 'var', name: 'home' },
@@ -51,7 +51,7 @@ module.exports = {
         buyTools: 'buyTools'
       },
       exposes: {
-        fruit: './src/fruit'
+        './fruit': './src/fruit'
       },
       shared: []
     }),
