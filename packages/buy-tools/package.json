@@ -12,7 +12,7 @@
     "single-spa": "^5.1.0",
     "single-spa-svelte": "^2.0.0",
     "svelte": "^3.19.2",
-    "webpack": "5.74.0",
+    "webpack": "5.76.0",
     "webpack-cli": "^4.10.0"
   },
   "scripts": {
