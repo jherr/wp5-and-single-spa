@@ -41,7 +41,8 @@ module.exports = {
         store: 'store',
       },
       exposes: {
-        './Cart': './src/cart',
+        './Cart': './src/index',
+        './Cart/Cart': './src/cart',
       },
       shared: []
     }),

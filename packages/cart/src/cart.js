@@ -15,14 +15,6 @@ const Cart = () => (
       <li><a href="#">Option 4</a></li>
     </ul>
   </div>
-);  
+);
 
-const cartLifecycles = singleSpaReact({
-  React,
-  ReactDOM,
-  rootComponent: Cart
-});
-
-export const bootstrap = cartLifecycles.bootstrap;
-export const mount = cartLifecycles.mount;
-export const unmount = cartLifecycles.unmount;
+export default Cart;

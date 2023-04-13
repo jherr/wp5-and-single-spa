@@ -39,6 +39,7 @@ module.exports = {
       filename: 'remoteEntry.js',
       remotes: {
         store: 'store',
+        cart: 'cart',
       },
       exposes: {
         './Header': './src/header',
