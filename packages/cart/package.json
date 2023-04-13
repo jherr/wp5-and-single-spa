@@ -1,5 +1,5 @@
 {
-  "name": "search",
+  "name": "cart",
   "version": "0.0.0",
   "private": true,
   "dependencies": {
@@ -7,8 +7,8 @@
     "@babel/preset-react": "^7.8.3",
     "babel-loader": "^8.0.6",
     "html-webpack-plugin": "5.5.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
     "serve": "^14.0.1",
     "single-spa-react": "^5.0.0",
     "webpack": "5.74.0",
@@ -17,6 +17,6 @@
   "scripts": {
     "start": "webpack --watch",
     "build": "webpack --mode production",
-    "serve": "serve dist -p 3003"
+    "serve": "serve dist -p 3006"
   }
 }

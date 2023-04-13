@@ -13,7 +13,7 @@ module.exports = {
   },
 
   output: {
-    publicPath: 'http://localhost:3003/'
+    publicPath: 'http://localhost:3006/'
   },
 
   resolve: {
@@ -34,15 +34,14 @@ module.exports = {
 
   plugins: [
     new ModuleFederationPlugin({
-      name: 'nav',
-      library: { type: 'var', name: 'nav' },
+      name: 'cart',
+      library: { type: 'var', name: 'cart' },
       filename: 'remoteEntry.js',
       remotes: {
         store: 'store',
       },
       exposes: {
-        './Header': './src/header',
-        './Footer': './src/footer',
+        './Cart': './src/cart',
       },
       shared: []
     }),

@@ -24,4 +24,10 @@ registerApplication(
   location => location.pathname.startsWith('/')
 );
 
+registerApplication(
+  'cart',
+  () => import('cart/Cart'),
+  location => location.pathname.startsWith('/')
+);
+
 start();

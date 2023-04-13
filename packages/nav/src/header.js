@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
+import ReactDOMClient from 'react-dom/client';
 import singleSpaReact from 'single-spa-react';
 import store from 'store/store';
 
 const Header = () => {
   const [count, setCount] = useState(store.count);
+  
+  console.log({ ReactDOM });
+
   useEffect(() => {
     store.subscribe(() => {
       setCount(store.count);
@@ -19,7 +23,7 @@ const Header = () => {
               className="mui--appbar-height mui--text-display1"
               style={{ paddingLeft: '1em' }}
             >
-              Header
+              Header - React v{React.version}
             </td>
             <td
               className="mui--appbar-height mui--text-display1"

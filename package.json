@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "build": "yarn workspaces run build",
+    "preinstall": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +",
     "serve": "wsrun --parallel serve",
     "start": "concurrently \"wsrun --parallel start\" \"wsrun --parallel serve\""
   },

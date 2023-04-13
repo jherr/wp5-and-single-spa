@@ -48,7 +48,8 @@ module.exports = {
       remotes: {
         nav: 'nav',
         productImage: 'productImage',
-        buyTools: 'buyTools'
+        buyTools: 'buyTools',
+        cart: 'cart',
       },
       exposes: {
         './fruit': './src/fruit'
